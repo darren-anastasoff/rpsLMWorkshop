@@ -39,6 +39,7 @@ const RpsUI = React.createClass({
                 <input type="text" id="p1Throw" onChange={this.p1ThrowChangeHandler}/>
                 <input type="text" id="p2Throw" onChange={this.p2ThrowChangeHandler}/>
                 <button id="playButton" onClick={this.submitForm}>Play</button>
+                NO HISTORY
             </div>
         )
     }
@@ -125,6 +126,40 @@ describe("playRound", function () {
         submitPlayForm()
 
         expect(playSpy).toHaveBeenCalledWith(p1Throw,  p2Throw, jasmine.any(Object))
+    })
+
+    describe("when there is no history", function () {
+        beforeEach(function () {
+            renderApp({
+                playRound: function(ui){
+                    ui.noHistory()
+                }
+            })
+        })
+
+        it("tells the user 'NO HISTORY'", function () {
+            submitPlayForm()
+
+            expect(page()).toContain("NO HISTORY")
+        })
+    })
+
+    describe("when there is history", function () {
+        beforeEach(function () {
+            renderApp({
+                playRound: function(ui){
+                    ui.history([new Round("rock", "paper", "p2")])
+                }
+            })
+        })
+
+        it("shows the user the history", function () {
+            submitPlayForm()
+
+            expect(page()).toContain("rock")
+            expect(page()).toContain("paper")
+            expect(page()).toContain("p2")
+        })
     })
 
     let domFixture
